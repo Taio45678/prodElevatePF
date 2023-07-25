@@ -1,22 +1,27 @@
-// ProductDetail.jsx
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { getProductDetail, addCart } from '../../../redux/actions/actions';
-import { Card, CardImg, CardBody, CardTitle, CardText } from 'reactstrap';
-import loadingImg from '../../../assets/loading.png';
-import { getStoredCart, updateStoredCart } from '../../Cart/cartUtils';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { getProductDetail } from "../../../redux/actions/actions";
+import loadingImg from "../../../assets/loading.png";
+import { getCategory } from "../../../redux/actions/actions";
+import styles from "./ProductDetail.module.css";
 
-
+import { addToCart } from "../../../redux/actions/actions";
+import { Link } from "react-router-dom";
+// import { addToCart } from "../../../redux/actions/actions";
 export const ProductDetail = () => {
+ 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(() => {
+    dispatch(getCategory());
+  }, []);
   const [loading, setLoading] = useState(true);
   const params = useParams();
   const { id } = params;
 
   const productDetail = useSelector((state) => state.productDetail);
   const selectedCategory = useSelector((state) => state.category);
-  const cartItems = useSelector((state) => state.cart);
 
   useEffect(() => {
     Promise.all([dispatch(getProductDetail(id))])
@@ -30,61 +35,52 @@ export const ProductDetail = () => {
   }, [dispatch, id]);
 
   const { images, categoryId, salePrice, description, name } = productDetail;
-  const imageUrl = images && images.length > 0 ? images[0] : null;
-  const category = selectedCategory.find((cat) => cat.id === categoryId)?.name || "Unknown Category";
 
-  const addToCart = () => {
-    const isProductInCart = cartItems.some((item) => item.id === id);
-  
-    if (!isProductInCart) {
-      const productToAdd = {
-        id,
-        name,
-        price: salePrice,
-        quantity: 1,
-        image: imageUrl,
-      };
-  
-      dispatch(addCart(productToAdd));
-      console.log("Producto agregado al carrito:", productToAdd);
-  
-      // Aquí estás llamando a getStoredCart(), lo cual no es necesario
-      // updateStoredCart(getStoredCart()); 
-  
-      // En su lugar, debes llamar a updateStoredCart y pasar el carrito actual
-      updateStoredCart(cartItems);
-    } else {
-      console.log("El producto ya existe en el carrito.");
-    }
+  const handledAddToCart = (product) => {
+    dispatch(addToCart(productDetail));
+    navigate("/cart");
   };
-  
+
+  // Buscar la categoría correspondiente al categoryId
+  const category =
+    selectedCategory.find((cat) => cat.id === categoryId)?.name ||
+    "Unknown Category";
 
   return (
-    <div>
-      <h1>Detail</h1>
+    <div style={{padding:'1rem'}}>
       {loading ? (
         <div>
           <img src={loadingImg} alt="Loading" />
         </div>
       ) : (
-        <Card>
-          <CardImg
-            top
-            width="100%"
-            src={images}
-            alt="Product Image"
-            className="mx-auto"
-            style={{ maxWidth: "300px" }}
-          />
-          <CardBody>
-            <CardText> {name}</CardText>
-            <CardTitle tag="h5">{description}</CardTitle>
-            <CardText>Price: {salePrice}</CardText>
-            <CardText>{description}</CardText>
-            <CardText>{category}</CardText>
-            <button onClick={addToCart}>Agregar al carrito</button>
-          </CardBody>
-        </Card>
+        <div className={styles.container}>
+          <div className={styles.back}>
+            <Link to='/home'>
+              <div className={styles.backButton}>
+                <p><ion-icon name="arrow-round-back"></ion-icon><ion-icon name="home"></ion-icon></p>
+              </div>
+            </Link>
+          </div>
+          <div className={styles.divImg}>
+            <img src={images} alt={name} />
+          </div>
+          <div className={styles.description}>
+            <h4>{name}</h4>
+            {/* Utilizamos dangerouslySetInnerHTML para renderizar el HTML */}
+            <div
+              className={styles.descriptionItem}
+              dangerouslySetInnerHTML={{ __html: description }}
+            ></div>
+            <h6>Category: {category} </h6>
+            <h4>Price ${salePrice} </h4>
+            <button
+              className={styles.buttonCart}
+              onClick={() => handledAddToCart(productDetail)}
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

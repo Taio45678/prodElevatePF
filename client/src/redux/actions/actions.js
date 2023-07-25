@@ -10,14 +10,20 @@ import {
   ADD_USER,
   GET_PROVIDER,
   LOGIN,
-  ADD_CART,
-  UPDATE_CART,
-  DELETE_CART,
-  UPDATE_CART_STATE,
+  ADD_TO_CART,
+  CALCULE_TOTALS,
+  REMOVE_TO_CART,
+  DECREMENT_CART,
+  INCREMENT_CART,
+  CLEAR_CART,
+  GET_PRODUCT_ID,
 } from "./types";
 import axios from "axios";
 import { ENDPOINT } from "../../components/endpoint/ENDPOINT";
-import { updateStoredCart } from "../../components/Cart/cartUtils";
+
+import { toast } from "react-toastify";
+
+
 export const showProducts = () => {
   try {
     return async (dispatch) => {
@@ -33,6 +39,8 @@ export const showProducts = () => {
 export const getProductName = (name) => {
   return { type: GET_PRODUCT_NAME, payload: name };
 };
+
+
 
 export const getProductDetail = (id) => {
   return (dispatch) => {
@@ -132,62 +140,115 @@ export const getProvider = () => {
   }
 };
 
-export const login = () => {
+export const login = (userData) => {
   try {
     return async (dispatch) => {
-      await axios.get(`${ENDPOINT}login`).then((response) => {
-        console.log(response.data);
-        if (!response.data) throw Error("The user does not exist!");
-        return dispatch({ type: LOGIN, payload: response.data });
-      });
+      const response = await axios.post(`${ENDPOINT}login`, userData);
+      if (response.data) {
+        const user = response.data;        
+        return dispatch({ type: LOGIN, payload: user.User });
+      }
+      throw new Error("Credenciales inválidas");
     };
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-export const addCart = (product) => (dispatch, getState) => {
-  const cart = getState().cart;
-  const existingProduct = cart.find((item) => item.id === product.id);
+export const logout = () => {
+  try {
+    return async (dispatch) => {
+      sessionStorage.removeItem("user"); // Eliminar la información del usuario del sessionStorage
+      return dispatch({ type: LOGIN, payload: null });
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
-  if (existingProduct) {
-    // Si el producto ya está en el carrito, actualizamos la cantidad
-    const updatedCart = cart.map((item) =>
-      item.id === product.id ? { ...item, quantity: item.quantity + product.quantity } : item
-    );
-    dispatch(updateCartState(updatedCart));
-  } else {
-    // Si el producto no está en el carrito, lo agregamos
+//Cart
+export const addToCart = (product) => {
+
+  return function (dispatch) {
     dispatch({
-      type: ADD_CART,
+      type: ADD_TO_CART,
       payload: product,
     });
-  }
+    toast.success(`${product.name} add to cart`, {
+      position: "bottom-left",
+    });
 
-  // Guardar el carrito en localStorage utilizando la función updateStoredCart
-  updateStoredCart(cart);
+  return {
+    type: ADD_TO_CART,
+    payload: product,
+
+  };
+};
+}
+
+export const calculateTotals = () => {
+  return {
+    type: CALCULE_TOTALS,
+  };
 };
 
-export const updateCart = (id, quantity, price, subtotalitem) => {
+export const removeToCart = (product) => {
+
+  return function (dispatch) {
+    dispatch({
+      type: REMOVE_TO_CART,
+      payload: product,
+    });
+    toast.error(`${product.name} remove from de cart`, {
+      position: "bottom-left",
+    });
+
   return {
-    type: UPDATE_CART,
-    payload: {
-      id,
-      quantity,
-      price,
-      subtotalitem,
-    },
+    type: REMOVE_TO_CART,
+    payload: product,
+
   };
 };
-export const updateCartState = (cart) => {
+}
+
+export const decrementToCart = (product) => {
+
+  return function (dispatch) {
+    dispatch({
+      type: DECREMENT_CART,
+      payload: product,
+    });
+    toast.info(` Decrement ${product.name} cart quantity`, {
+      position: "bottom-left",
+    });
+
   return {
-    type: UPDATE_CART_STATE,
-    payload: cart,
+    type: DECREMENT_CART,
+    payload: product,
+
   };
 };
-export const deleteCart = (productId) => {
+}
+
+export const incrementToCart = (product) => {
   return {
-    type: 'DELETE_CART',
-    payload: productId,
+    type: INCREMENT_CART,
+    payload: product,
   };
 };
+export const clearCart = () => {
+
+  return function (dispatch) {
+    dispatch({
+      type: CLEAR_CART,
+    });
+    toast.error(`The cart is clear`, {
+      position: "bottom-left",
+    });
+
+  return {
+    type: CLEAR_CART,
+
+  };
+};
+}

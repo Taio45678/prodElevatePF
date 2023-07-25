@@ -11,19 +11,54 @@ import { Provider } from './components/Product/provider/Provider';
 import { Role } from './components/users/role/Role';
 import { CreateUser } from './components/users/createUser/CreateUser';
 import { Login } from './components/users/login/Login';
-import {Cart} from './components/Cart/Cart';
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showNavBar, setShowNavBar] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     setShowNavBar(location.pathname !== "/");
   }, [location]);
 
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log("Usuario logueado:", user);
+        setCurrentUser(user);
+      navigate("/home");
+      } else {
+
+        console.log("Usuario no logueado");
+        setCurrentUser(null);
+
+        // console.log("Usuario no logueado");
+        // setCurrentUser(null);
+        // navigate("/");
+
+      }
+    });
+  }, []);
+
+  const handleSignIn = async () => {
+    try {
+
+
+
+      const user = await handleGoogleSignIn();      
+      setCurrentUser(user);
+      navigate("/home");
+    } catch (error) {
+      navigate("/login");   }
+
+
+  };
   return (
     <>
-      {showNavBar && <NavBar />}
+      {showNavBar && <NavBar user={currentUser} handleSignIn={handleSignIn} />}
       <div>
         <Routes>
           <Route exact path="/" element={<Landing />} />
@@ -31,16 +66,35 @@ function App() {
           <Route exact path="/producto" element={<Product />} />
           <Route exact path="/proveedor" element={<Provider />} />
           <Route exact path="/rol" element={<Role />} />
-          <Route exact path="/usuario" element={<CreateUser />} />
           <Route exact path="/login" element={<Login />} />
-          <Route exact path="/cart" element={<Cart/>} />
+          <Route exact path="/usuario" element={<CreateUser />} />
           {/* <Route exact path="/" element={<Provider />} /> */}
           <Route exact path="/home" element={<Home />} />
           <Route path="/productid/:id" element={<ProductDetail />} />
+          <Route path="/productidedit/:id" element={<EditProduct />} />
+
+          <Route path="/cart" element={<Cart />} />
+          {currentUser && (
+            <Route path="/settings" element={<Configuration />} />
+            )}       
+        
         </Routes>
+        <ToastContainer 
+        position="top-center"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        closeButton={false}
+        theme="dark"
+        />
+        <Footer />
       </div>
     </>
   );
 }
 
 export default App;
+

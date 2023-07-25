@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { UploadImg } from "../uploadImg/UploadImg";
-import { addProduct, getCategory, getProvider } from "../../../redux/actions/actions";
+import {
+  addProduct,
+  getCategory,
+  getProvider,
+} from "../../../redux/actions/actions";
 import { useDispatch, useSelector } from "react-redux";
+import styles from "./Product.module.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 export const Product = () => {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.category);
   const provider = useSelector((state) => state.provider);
   useEffect(() => {
-    dispatch(getCategory()); 
-    dispatch(getProvider()); 
+    dispatch(getCategory());
+    dispatch(getProvider());
   }, []);
 
   const sortedCategories = [...category].sort((a, b) =>
-  a.name.localeCompare(b.name));
+    a.name.localeCompare(b.name)
+  );
 
   const sortedproviders = [...provider].sort((a, b) =>
-  a.name.localeCompare(b.name));
+    a.name.localeCompare(b.name)
+  );
 
-  const [product, setProduct] = useState({    
+  const [product, setProduct] = useState({
     category: "",
     name: "",
     description: "",
@@ -28,8 +40,16 @@ export const Product = () => {
     provider: [],
     images: [],
   });
+  const [description, setDescription] = useState('');
 
-  
+  const handleDescriptionChange = (value) => {
+    setDescription(value);
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      description: value,
+    }));
+  };
+
   const [isImageUploaded, setIsImageUploaded] = useState(false);
 
   const handleChange = (event) => {
@@ -39,7 +59,7 @@ export const Product = () => {
       [event.target.name]: event.target.value,
     });
   };
-  
+
   const handleProviderSelect = (event) => {
     const selectedProviderId = parseInt(event.target.value);
     if (!product.provider.includes(selectedProviderId)) {
@@ -50,7 +70,6 @@ export const Product = () => {
     }
   };
 
- 
   const handleImageUpload = (imageUrls) => {
     setProduct((imgProduct) => ({
       ...imgProduct,
@@ -60,10 +79,10 @@ export const Product = () => {
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();  
-    console.log(product) 
+    event.preventDefault();
+    console.log(product);
     dispatch(addProduct(product));
-    alert("Exito");
+    toast.success('¡Product created successfully!');
     setProduct({
       category: "",
       name: "",
@@ -79,21 +98,21 @@ export const Product = () => {
   };
 
   return (
-    <div className="container-sm">
-      <h1>add product</h1>
+    <div className={styles.container}>
+      <div className={styles.divLeft}>
       <hr />
-      <form onSubmit={ handleSubmit }>
-       
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <h5 style={{fontFamily:'Poppins'}}>New product</h5>
         {/* Categoria de Producto */}
-        <label htmlFor="category">category product</label>
+        <div className="d-flex justify-content-around">
         <select
-          className="form-select form-select-sm"
+          className="form-select form-select-sm mb-3 w-50 d-start"
           name="category"
           id="category"
           value={product.category}
           onChange={handleChange}
         >
-          <option value="">-- select category --</option>
+          <option value="">-- Category --</option>
           {sortedCategories.map((catg) => (
             <option key={catg.id} value={catg.id}>
               {catg.name}
@@ -102,109 +121,139 @@ export const Product = () => {
         </select>
 
         {/* Nombre de Producto */}
-        <label htmlFor="name">name: </label>
+        
         <input
-          className="form-control"
+          className="form-control mb-3 w-50 d-end"
           type="text"
           name="name"
-          placeholder=" enter name "
+          placeholder= "Product Name"
           value={product.name}
           onChange={handleChange}
         />
+        </div>
+        
 
-        {/* Descripcion de Producto */}
-        <label htmlFor="name">description: </label>
-        <input
-          className="form-control"
-          type="textarea"
-          name="description"
-          value={product.description}
-          onChange={handleChange}
-        />
+         {/* Descripcion de Producto */}
+         <div className="form-control mb-3">            
+            <ReactQuill
+              value={product.description}
+              onChange={handleDescriptionChange}
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, 3, 4, false] }],
+                  [ 'bold', 'italic', 'underline', 'strike'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  ['link'],
+                ],
+              }}
+              formats={[
+                'header',
+                'bold', 'italic', 'underline', 'strike',
+                'list', 'bullet',
+                'link', 'image',
+              ]}
+              placeholder="enter description to product..."
+            />
+          </div>
 
-        {/* precio de compra de Producto */}
-        <label htmlFor="purchasePrice">purchase price</label>
+        <div className="d-flex g-3">
+            {/* precio de compra de Producto */}
+        
         <div className="input-group">
-        <input
-          className="form-control"
-          type="text"
-          name="purchasePrice"
-          placeholder="-- purchase price --"
-          value={product.purchasePrice}
-          onChange={handleChange}
-        />
-        <span className="input-group-text">$</span>
-          <span className="input-group-text">0.00</span>
+          <input
+            className="form-control mb-3 w-25"
+            type="text"
+            name="purchasePrice"
+            placeholder="-- Purchase price --"
+            value={product.purchasePrice}
+            onChange={handleChange}
+          />
+          <span className="input-group-text mb-3">$</span>
+          {/* <span className="input-group-text mb-3">0.00</span> */}
         </div>
 
         {/* precio de venta de Producto */}
-        <label htmlFor="purchasePrice">sale price</label>
+        
         <div className="input-group">
           <input
-            className="form-control"
+            className="form-control mb-3 w-25"
             type="text"
             name="salePrice"
-            placeholder="-- sale price --"
+            placeholder="-- Sale price --"
             value={product.salePrice}
             onChange={handleChange}
           />
-          <span className="input-group-text">$</span>
-          <span className="input-group-text">0.00</span>
+          <span className="input-group-text mb-3">$</span>
+          {/* <span className="input-group-text mb-3">0.00</span> */}
         </div>
 
+        </div>
+        
+
         {/* stock minimo de Producto */}
-        <label htmlFor="minimumStock">Stock minimum</label>
         <input
-          className="form-control"
+          className="form-control mb-3"
           type="minimumStock"
           name="minimumStock"
-          placeholder="-- enter minimum stock --"
+          placeholder="-- Minimum stock --"
           value={product.minimumStock}
           onChange={handleChange}
         />
-  
-<div className="container-sm">
-      {/* ... */}
-      <select
-        className="form-select form-select-sm"
-        name="provider"
-        id="provider"
-        value=""
-        onChange={handleProviderSelect}
-      >
-        <option value="">-- select provider --</option>
-        {sortedproviders?.map((prov) => (
-          <option key={prov.id} value={prov.id}>
-            {prov.name}
-          </option>
-        ))}
-      </select>
 
-      <div>
-        {product.provider?.map((provId) => {
-          const selectedProvider = provider.find((prov) => prov.id === provId);
-          return (
-            <ul className="list-group" key={`provider_${provId}`}>
-              <li className="list-group-item" key={`provider_item_${provId}`}>
-                {selectedProvider.name}
-              </li>
-            </ul>
-          );
-        })}
-      </div>
-      {/* ... */}
-    </div>
+        <div className="container-m">
+          {/* ... */}
+          <select
+            className="form-select form-select-sm mb-3 w-100"
+            name="provider"
+            id="provider"
+            value=""
+            onChange={handleProviderSelect}
+          >
+            <option value="">-- Select provider --</option>
+            {sortedproviders?.map((prov) => (
+              <option key={prov.id} value={prov.id}>
+                {prov.name}
+              </option>
+            ))}
+          </select>
 
-        {/* <UploadImg onImageUpload={handleImageUpload} /> */}
-        <UploadImg 
-          onImageUpload={handleImageUpload} 
-          uploadedImages={product.images}
-          clearUploadedImages={() => setUserData((product) => ({ ...product, images: [] }))}
-        />
+          <div>
+            {product.provider?.map((provId) => {
+              const selectedProvider = provider.find(
+                (prov) => prov.id === provId
+              );
+              return (
+                <ul className="list-group" key={`provider_${provId}`}>
+                  <li
+                    className="list-group-item"
+                    key={`provider_item_${provId}`}
+                  >
+                    {selectedProvider.name}
+                  </li>
+                </ul>
+              );
+            })}
+          </div>
+          {/* ... */}
+        </div>
 
         <br />
-        <button className="btn btn-primary">submit</button>
+        <button className={styles.create}>Create</button>
       </form>
+
+      </div>
+      <div className={styles.divRight}>
+        
+        {/* <UploadImg onImageUpload={handleImageUpload} /> */}
+      <UploadImg
+        onImageUpload={handleImageUpload}
+        uploadedImages={product.images}
+        clearUploadedImages={() =>
+          setUserData((product) => ({ ...product, images: [] }))
+        }
+      />
+          
+      </div>
     </div>
   );
 };

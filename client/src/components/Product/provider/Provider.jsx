@@ -1,104 +1,105 @@
-import React, { useState } from 'react';
-import { addProvider } from '../../../redux/actions/actions';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { addProvider } from "../../../redux/actions/actions";
+import { useDispatch } from "react-redux";
+import styles from "./Provider.module.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export const Provider = () => {
   const dispatch = useDispatch();
-    const [provider, setProvider] = useState({
-        name: '',
-        email: '',
-        address:'',
-        numPhone:'',
-        identification: '',
-    });
+  const [provider, setProvider] = useState({
+    name: "",
+    email: "",
+    address: "",
+    numPhone: "",
+    identification: "",
+  });
 
-    const handleChange = (event) => {
-        event.preventDefault();
-        setProvider({
-          ...provider,
-          [event.target.name]: event.target.value,
-        });
-    }
-  const handleSubmit = (event) => {
-    event.preventDefault(); 
-    console.log(provider)  
-    dispatch(addProvider(provider));
-    alert("Exito");
+  const handleChange = (event) => {
+    event.preventDefault();
     setProvider({
-        name: '',
-        email: '',
-        address:'',
-        numPhone:'',
-        identification: '',
+      ...provider,
+      [event.target.name]: event.target.value,
     });
-  }
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(provider);
+    dispatch(addProvider(provider));
+    toast.success('¡Provider created successfully!');
+    setProvider({
+      name: "",
+      email: "",
+      address: "",
+      numPhone: "",
+      identification: "",
+    });
+  };
   return (
-    <div>
-        
-        <div className='container-sm'>
+    <div className={styles.container}>
+        <div className={styles.divLeft}>
+          <form onSubmit={handleSubmit} className={styles.formContainer}>
+            <h4 style={{fontFamily: 'Poppins'}}>New Provider</h4>
+          {/* Nombre de proveedor */}
+          
+          <input
+            className="form-control mb-3 w-75"
+            type="text"
+            name="name"
+            placeholder= "Fullname"
+            value={provider.name}
+            onChange={handleChange}
+          />
 
-        <h1>provider</h1>      
-        <hr />
-        <form onSubmit={ handleSubmit }>        
-       
-        
-        {/* Nombre de proveedor */}
-        <label htmlFor="name">Provider: </label>        
-        <input
-        className='form-control'
-        type="text"
-        name="name"
-        placeholder=" enter name "
-        value={provider.name}
-        onChange={handleChange}
-      />
+          {/* identificacion DNI RIF  de proveedor */}
+          <input
+            className="form-control mb-3 w-75"
+            type="text"
+            name="identification"
+            placeholder="DNI/RIF/Document ID"
+            value={provider.identification}
+            onChange={handleChange}
+          />
 
-       {/* identificacion DNI RIF  de proveedor */}
-       <label htmlFor="identification">RIF/ DNI/ Identification: </label>        
-         <input
-         className='form-control'
-         type="text"
-         name="identification"
-         value={provider.identification}
-         onChange={handleChange}
-       />
+          {/* email  de proveedor */}
+          <input
+            className="form-control mb-3 w-75"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={provider.email}
+            onChange={handleChange}
+          />
 
-       {/* email  de proveedor */}
-       <label htmlFor="email">email: </label>        
-         <input
-         className='form-control'
-         type="email"
-         name="email"
-         value={provider.email}
-         onChange={handleChange}
-       />
+          {/* direccion de proveedor */}
+          <input
+            className="form-control mb-3 w-75"
+            type="textarea"
+            name="address"
+            placeholder="Address"
+            value={provider.address}
+            onChange={handleChange}
+          />
 
-       {/* direccion de proveedor */}
-       <label htmlFor="name">address: </label>             
-        <input
-        className='form-control'
-        type="textarea"
-        name="address"
-        value={provider.address}
-        onChange={handleChange}
-      />       
-        
-       {/* numero telef de proveedor */}
-       <label htmlFor="name">Number Phone: </label>             
-        <input
-        className='form-control'
-        type="text"
-        name="numPhone"
-        value={provider.numPhone}
-        onChange={handleChange}
-      />
-       
-       
-        <br />
+          {/* numero telef de proveedor */}
+          <input
+            className="form-control mb-3 w-75"
+            type="text"
+            name="numPhone"
+            placeholder="Phone N°"
+            value={provider.numPhone}
+            onChange={handleChange}
+          />
 
-        <button className='btn btn-primary'>submit</button> 
+          <br />
+
+          <button className={styles.create}>Create</button>
         </form>
-    </div>
-    </div>
-  )
-}
+      </div>
+        <div className={styles.divRight}>
+        </div>
+      </div>
+
+  );
+};
