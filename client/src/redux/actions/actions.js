@@ -53,7 +53,7 @@ export const getProductDetail = (id) => {
           resolve();
         })
         .catch((error) => {
-          throw new Error("Error fetching product details.");
+          throw new Error("Error fetching product details."); // Lanza una nueva excepción
         });
     });
   };
@@ -85,7 +85,7 @@ export const getCategory = () => {
   try {
     return async (dispatch) => {
       await axios.get(`${ENDPOINT}category`).then((response) => {
-        if (!response.data) throw Error("The category does not exist!");
+        if (!response.data) throw Error("¡The category does not exist!");
         return dispatch({ type: GET_CATEGORY, payload: response.data });
       });
     };
@@ -131,7 +131,7 @@ export const getProvider = () => {
   try {
     return async (dispatch) => {
       await axios.get(`${ENDPOINT}provider`).then((response) => {
-        if (!response.data) throw Error("The provider does not exist!");
+        if (!response.data) throw Error("¡The provider does not exist!");
         return dispatch({ type: GET_PROVIDER, payload: response.data });
       });
     };
@@ -167,24 +167,7 @@ export const logout = () => {
 };
 
 //Cart
-export const addToCart = (product) => {
 
-  return function (dispatch) {
-    dispatch({
-      type: ADD_TO_CART,
-      payload: product,
-    });
-    toast.success(`${product.name} add to cart`, {
-      position: "bottom-left",
-    });
-
-  return {
-    type: ADD_TO_CART,
-    payload: product,
-
-  };
-};
-}
 
 export const calculateTotals = () => {
   return {
@@ -210,6 +193,24 @@ export const removeToCart = (product) => {
   };
 };
 }
+
+export const addToCart = (product) => {
+  return function (dispatch) {
+    if (product.stock > 0) { // Utilizamos 'minStock' en lugar de 'stock' para verificar si hay existencias
+      dispatch({
+        type: ADD_TO_CART,
+        payload: product,
+      });
+      toast.success(`${product.name} added to cart`, {
+        position: "bottom-left",
+      });
+    } else {
+      toast.error("Out of stock", {
+        position: "bottom-left",
+      });
+    }
+  };
+};
 
 export const decrementToCart = (product) => {
 

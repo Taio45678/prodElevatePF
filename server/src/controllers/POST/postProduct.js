@@ -33,7 +33,7 @@ async function postProduct(req, res) {
                 await providerInstance.addProduct(product);
             }
         }
-
+        console.log(product);
         return res.status(201).json(product);
     } catch (error) {
         return res.status(500).json({ message: error.message });

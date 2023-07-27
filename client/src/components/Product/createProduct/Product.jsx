@@ -39,6 +39,7 @@ export const Product = () => {
     minimumStock: "",
     provider: [],
     images: [],
+    stock:0,
   });
   const [description, setDescription] = useState('');
 
@@ -80,20 +81,16 @@ export const Product = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(product);
-    dispatch(addProduct(product));
+    // El valor del "Minimum stock" ingresado en el formulario se mantendrá en el campo "minimumStock"
+    // y también se copiará en el campo "stock" antes de enviar el formulario.
+    const productWithStock = {
+      ...product,
+      stock: parseInt(product.minimumStock), // Establecer "Stock" como un número igual al "Minimum stock"
+    };
+    
+    console.log(productWithStock);
+    dispatch(addProduct(productWithStock));
     toast.success('¡Product created successfully!');
-    setProduct({
-      category: "",
-      name: "",
-      description: "",
-      purchasePrice: "",
-      salePrice: "",
-      minimumStock: "",
-      provider: [],
-      images: [],
-    });
-    // Reiniciar isImageUploaded a false después de enviar el formulario
     setIsImageUploaded(false);
   };
 

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateCartState } from "../../redux/actions/actions";
-import Mensaje from "./mensaje/mensaje";
-import Seleccion from "./seleccion/seleccion";
-import { getStoredCart, updateStoredCart } from "./cartUtils";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+
+import "react-toastify/dist/ReactToastify.css";
+//import StripeButton from "../StripeCart/StripeButton";
+
 import styles from "./Cart.module.css";
 import {
   addToCart,
@@ -18,26 +19,6 @@ import { ToastContainer } from "react-toastify";
 
 const Cart = () => {
   const { cartItems, cartTotalAmount } = useSelector((state) => state);
-export const Cart = () => {
-  const cart = useSelector(state => state.cart);
-  const dispatch = useDispatch();
-  const [sumaTotal, setSumaTotal] = useState(0);
-
- 
-  useEffect(() => {
-    const storedCart = getStoredCart() || [];
-    console.log("Productos almacenados en localStorage:", storedCart); // Imprimir los productos almacenados
-
-    // Si hay productos en el localStorage, actualizamos el estado del carrito en Redux
-    if (storedCart.length > 0) {
-      dispatch(updateCartState(storedCart));
-    }
-  }, [dispatch]);
-  useEffect(() => {
-    updateStoredCart(cart);
-    updateSumaTotal(cart);
-  }, [cart]);
-
 
   const dispatch = useDispatch();
   console.log(cartItems);

@@ -1,16 +1,29 @@
-import './App.css';
-import { useState, useEffect } from 'react';
-import { NavBar } from './components/NavBar/NavBar';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { Home } from './components/Home/Home';
-import { ProductDetail } from './components/Product/productDetail/ProductDetail';
-import { Landing } from './components/Landing/Landing';
-import { Category } from './components/Product/category/Category';
-import { Product } from './components/Product/createProduct/Product';
-import { Provider } from './components/Product/provider/Provider';
-import { Role } from './components/users/role/Role';
-import { CreateUser } from './components/users/createUser/CreateUser';
-import { Login } from './components/users/login/Login';
+import "./App.css";
+import { useState, useEffect } from "react";
+import { NavBar } from "./components/NavBar/NavBar";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Home } from "./components/Home/Home";
+import { ProductDetail } from "./components/Product/productDetail/ProductDetail";
+import { Landing } from "./components/Landing/Landing";
+import { Category } from "./components/Product/category/Category";
+import { Product } from "./components/Product/createProduct/Product";
+import { Provider } from "./components/Product/provider/Provider";
+import { Role } from "./components/users/role/Role";
+import { CreateUser } from "./components/users/createUser/CreateUser";
+import { Configuration } from "./components/Configuration/Configuration";
+import { Footer } from "./components/Footer/Footer";
+import { Login } from "./components/users/login/Login";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+// Importa 'auth' desde firebase.js
+import { auth } from "./components/users/Firebase/firebase.js";
+import { handleGoogleSignIn } from "./components/users/Firebase/GoogleLogin"; // Import your Google sign-in function
+import Cart from "./components/Cart/Cart";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import PostCompra from "./components/PostCompra/PostCompra";
+import { EditProduct } from "./components/Product/editProduct/EditProduct";
+
+
 
 function App() {
   const location = useLocation();
@@ -61,6 +74,7 @@ function App() {
       {showNavBar && <NavBar user={currentUser} handleSignIn={handleSignIn} />}
       <div>
         <Routes>
+        <Route path="/post-compra" element={<PostCompra/>} />
           <Route exact path="/" element={<Landing />} />
           <Route exact path="/categoria" element={<Category />} />
           <Route exact path="/producto" element={<Product />} />
@@ -72,10 +86,11 @@ function App() {
           <Route exact path="/home" element={<Home />} />
           <Route path="/productid/:id" element={<ProductDetail />} />
           <Route path="/productidedit/:id" element={<EditProduct />} />
-
+          
           <Route path="/cart" element={<Cart />} />
           {currentUser && (
             <Route path="/settings" element={<Configuration />} />
+            
             )}       
         
         </Routes>
@@ -97,4 +112,3 @@ function App() {
 }
 
 export default App;
-

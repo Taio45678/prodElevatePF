@@ -15,12 +15,8 @@ import {
   LOGIN,
   REMOVE_TO_CART,
   SHOW_PRODUCTS,
-  ADD_CART,
-  UPDATE_CART,
-  DELETE_CART,
-  UPDATE_CART_STATE
 } from "../actions/types";
-import { updateStoredCart } from "../../components/Cart/cartUtils"
+
 const initialState = {
   cartItems: localStorage.getItem("cartItems")
     ? JSON.parse(localStorage.getItem("cartItems"))
@@ -34,41 +30,42 @@ const initialState = {
   provider: [],
   user: null,
   role: [],
-  cart: [], // Carrito agregado al estado inicial
-  cartItems: [],
 };
 
-function reducer(state = initialState, action) {
-  const { type, payload } = action; // Desestructuración del objeto action
-
-  switch (type) {
+function reducer(state = initialState, actions) {
+  switch (actions.type) {
     case SHOW_PRODUCTS:
       return {
         ...state,
-        products: payload,
-        productDetail: [...payload],
+        products: actions.payload,
+        productDetail: [...actions.payload],
       };
+
     case GET_PRODUCT_NAME:
       const filterProd = [...state.products];
-      const searchNotCsensitive = payload.toLowerCase();
-      const filteredProducts = filterProd.filter(
-        (prod) => prod.name.toLowerCase().includes(searchNotCsensitive)
+      const searchNotCsensitive = actions.payload.toLowerCase();
+      const filteredProducts = filterProd.filter((prod) =>
+        prod.name.toLowerCase().includes(searchNotCsensitive)
       );
       return {
         ...state,
         productsFiltered: filteredProducts,
       };
+
     case GET_PRODUCT_DETAIL:
-      console.log(payload);
+      console.log(actions.payload);
+      // const filteredProduct = filterProduct.filter((prod) => prod.id === actions.payload);
       return {
         ...state,
-        productDetail: payload,
+        productDetail: actions.payload,
       };
+
     case ADD_PRODUCT:
       return {
         ...state,
-        products: [...state.products, payload],
+        product: [...state.products, payload],
       };
+
     case ADD_CATEGORY:
       return {
         ...state,
@@ -77,28 +74,32 @@ function reducer(state = initialState, action) {
     case GET_CATEGORY:
       return {
         ...state,
-        category: payload,
+        category: actions.payload,
       };
+
     case ADD_PROVIDER:
       return {
         ...state,
         provider: [...state.provider, payload],
       };
+
     case GET_PROVIDER:
       return {
         ...state,
-        provider: payload,
+        provider: actions.payload,
       };
     case ADD_ROLE:
       return {
         ...state,
         role: [...state.role, payload],
       };
+
     case ADD_USER:
       return {
         ...state,
         user: [...state.user, payload],
       };
+
     case LOGIN:
       console.log("reducer login: ", actions.payload);
       return {
