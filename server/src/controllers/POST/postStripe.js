@@ -4,9 +4,13 @@ const {Product} = require('../../db')
 const { STRIPE_KEY,  } = process.env;
 YOUR_DOMAIN="http://localhost:5173"
 
+//const stripe = Stripe(STRIPE_KEY);
+
+
 // const stripe = Stripe(STRIPE_KEY);
 
 const stripe = Stripe('sk_test_51NSJ3mCTMUVMB2lNSo9Zfos5FW7qJEqXjlfvb0P81YjC8pWe7nhyGY4yr44sYJrkZ0J2c1V98t0j2LsMKpIbGbmR00aq1MWGRZ');
+
 
 
 async function postStripe(req, res) {

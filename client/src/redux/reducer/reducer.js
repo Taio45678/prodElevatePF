@@ -15,11 +15,12 @@ import {
   LOGIN,
   REMOVE_TO_CART,
   SHOW_PRODUCTS,
+  EDIT_PRODUCT,
 } from "../actions/types";
 
 const initialState = {
-  cartItems: localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
+  cartItems: localStorage.getItem("cart")
+    ? JSON.parse(localStorage.getItem("cart"))
     : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
@@ -124,14 +125,14 @@ function reducer(state = initialState, actions) {
 
           return item;
         });
-        localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+
         return {
           ...state,
           cartItems: updatedCartItems,
         };
       } else {
         const newItem = { ...actions.payload, cartQuantity: 1 };
-        localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+
         return {
           ...state,
           cartItems: [...state.cartItems, newItem],
@@ -166,7 +167,7 @@ function reducer(state = initialState, actions) {
       const newCartItem = state.cartItems.filter(
         (cartItem) => cartItem.id !== actions.payload.id
       );
-      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+
       return {
         ...state,
         cartItems: newCartItem,
@@ -204,6 +205,15 @@ function reducer(state = initialState, actions) {
       return {
         ...state,
         cartItems: [],
+      };
+
+    case EDIT_PRODUCT:
+      const { productId, updatedProduct } = actions.payload;
+      return {
+        ...state,
+        products: state.products.map((product) =>
+          product.id === productId ? { ...product, ...updatedProduct } : product
+        ),
       };
 
     default:

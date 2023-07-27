@@ -7,11 +7,10 @@ import {
 } from "../../../redux/actions/actions";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./Product.module.css";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export const Product = () => {
   const dispatch = useDispatch();
@@ -41,7 +40,7 @@ export const Product = () => {
     images: [],
     stock:0,
   });
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState("");
 
   const handleDescriptionChange = (value) => {
     setDescription(value);
@@ -81,176 +80,190 @@ export const Product = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // El valor del "Minimum stock" ingresado en el formulario se mantendrá en el campo "minimumStock"
-    // y también se copiará en el campo "stock" antes de enviar el formulario.
-    const productWithStock = {
-      ...product,
-      stock: parseInt(product.minimumStock), // Establecer "Stock" como un número igual al "Minimum stock"
-    };
-    
-    console.log(productWithStock);
-    dispatch(addProduct(productWithStock));
-    toast.success('¡Product created successfully!');
+    console.log(product);
+    dispatch(addProduct(product));
+    toast.success("¡Product created successfully!");
+    setProduct({
+      category: "",
+      name: "",
+      description: "",
+      purchasePrice: "",
+      salePrice: "",
+      minimumStock: "",
+      provider: [],
+      images: [],
+    });
+    // Reiniciar isImageUploaded a false después de enviar el formulario
     setIsImageUploaded(false);
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.divLeft}>
-      <hr />
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <h5 style={{fontFamily:'Poppins'}}>New product</h5>
-        {/* Categoria de Producto */}
-        <div className="d-flex justify-content-around">
-        <select
-          className="form-select form-select-sm mb-3 w-50 d-start"
-          name="category"
-          id="category"
-          value={product.category}
-          onChange={handleChange}
-        >
-          <option value="">-- Category --</option>
-          {sortedCategories.map((catg) => (
-            <option key={catg.id} value={catg.id}>
-              {catg.name}
-            </option>
-          ))}
-        </select>
+        <hr />
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <h5 style={{ fontFamily: "Poppins", marginBottom: "2rem" }}>
+            New product
+          </h5>
+          {/* Categoria de Producto */}
+          <div className="d-flex justify-content-around">
+            <select
+              className="form-select form-select-sm mb-3 w-50 d-start"
+              name="category"
+              id="category"
+              value={product.category}
+              onChange={handleChange}
+            >
+              <option value="">-- Category --</option>
+              {sortedCategories.map((catg) => (
+                <option key={catg.id} value={catg.id}>
+                  {catg.name}
+                </option>
+              ))}
+            </select>
 
-        {/* Nombre de Producto */}
-        
-        <input
-          className="form-control mb-3 w-50 d-end"
-          type="text"
-          name="name"
-          placeholder= "Product Name"
-          value={product.name}
-          onChange={handleChange}
-        />
-        </div>
-        
+            {/* Nombre de Producto */}
 
-         {/* Descripcion de Producto */}
-         <div className="form-control mb-3">            
-            <ReactQuill
-              value={product.description}
-              onChange={handleDescriptionChange}
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, 3, 4, false] }],
-                  [ 'bold', 'italic', 'underline', 'strike'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  ['link'],
-                ],
-              }}
-              formats={[
-                'header',
-                'bold', 'italic', 'underline', 'strike',
-                'list', 'bullet',
-                'link', 'image',
-              ]}
-              placeholder="enter description to product..."
+            <input
+              className="form-control mb-3 w-50 d-end"
+              type="text"
+              name="name"
+              placeholder="Product Name"
+              value={product.name}
+              onChange={handleChange}
             />
           </div>
 
-        <div className="d-flex g-3">
-            {/* precio de compra de Producto */}
-        
-        <div className="input-group">
-          <input
-            className="form-control mb-3 w-25"
-            type="text"
-            name="purchasePrice"
-            placeholder="-- Purchase price --"
-            value={product.purchasePrice}
-            onChange={handleChange}
+          {/* Descripcion de Producto */}
+          {/* <h6 style={{fontFamily:'Poppins', textAlign:'start'}}>Description:</h6> */}
+
+          <ReactQuill
+            value={product.description}
+            onChange={handleDescriptionChange}
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, 3, 4, false] }],
+                ["bold", "italic", "underline", "strike"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["link"],
+              ],
+            }}
+            formats={[
+              "header",
+              "bold",
+              "italic",
+              "underline",
+              "strike",
+              "list",
+              "bullet",
+              "link",
+              "image",
+            ]}
+            placeholder="Enter product description..."
+            style={{ height: "130px", marginBottom: "4rem" }}
           />
-          <span className="input-group-text mb-3">$</span>
-          {/* <span className="input-group-text mb-3">0.00</span> */}
-        </div>
 
-        {/* precio de venta de Producto */}
-        
-        <div className="input-group">
-          <input
-            className="form-control mb-3 w-25"
-            type="text"
-            name="salePrice"
-            placeholder="-- Sale price --"
-            value={product.salePrice}
-            onChange={handleChange}
-          />
-          <span className="input-group-text mb-3">$</span>
-          {/* <span className="input-group-text mb-3">0.00</span> */}
-        </div>
+          {/* precio de compra de Producto */}
+          <div className="d-flex g-3">
+            <div className="input-group">
+              <input
+                className="form-control mb-3 w-25"
+                type="text"
+                name="purchasePrice"
+                placeholder="-- Purchase price --"
+                value={product.purchasePrice}
+                onChange={handleChange}
+              />
+              <span className="input-group-text mb-3">$</span>
+              {/* <span className="input-group-text mb-3">0.00</span> */}
+            </div>
 
-        </div>
-        
+            {/* precio de venta de Producto */}
 
-        {/* stock minimo de Producto */}
-        <input
-          className="form-control mb-3"
-          type="minimumStock"
-          name="minimumStock"
-          placeholder="-- Minimum stock --"
-          value={product.minimumStock}
-          onChange={handleChange}
-        />
-
-        <div className="container-m">
-          {/* ... */}
-          <select
-            className="form-select form-select-sm mb-3 w-100"
-            name="provider"
-            id="provider"
-            value=""
-            onChange={handleProviderSelect}
-          >
-            <option value="">-- Select provider --</option>
-            {sortedproviders?.map((prov) => (
-              <option key={prov.id} value={prov.id}>
-                {prov.name}
-              </option>
-            ))}
-          </select>
-
-          <div>
-            {product.provider?.map((provId) => {
-              const selectedProvider = provider.find(
-                (prov) => prov.id === provId
-              );
-              return (
-                <ul className="list-group" key={`provider_${provId}`}>
-                  <li
-                    className="list-group-item"
-                    key={`provider_item_${provId}`}
-                  >
-                    {selectedProvider.name}
-                  </li>
-                </ul>
-              );
-            })}
+            <div className="input-group">
+              <input
+                className="form-control mb-3 w-25"
+                type="text"
+                name="salePrice"
+                placeholder="-- Sale price --"
+                value={product.salePrice}
+                onChange={handleChange}
+              />
+              <span className="input-group-text mb-3">$</span>
+              {/* <span className="input-group-text mb-3">0.00</span> */}
+            </div>
           </div>
-          {/* ... */}
-        </div>
 
-        <br />
-        <button className={styles.create}>Create</button>
-      </form>
+          {/* stock minimo de Producto */}
+          <input
+            className="form-control mb-3"
+            type="minimumStock"
+            name="minimumStock"
+            placeholder="-- Minimum stock --"
+            value={product.minimumStock}
+            onChange={handleChange}
+          />
 
+          {/* Proveedor */}
+          <div className="container-m">
+            <select
+              className="form-select form-select-sm mb-3 w-50 d-flex"
+              name="provider"
+              id="provider"
+              value=""
+              onChange={handleProviderSelect}
+            >
+              <option value="">-- Select provider --</option>
+              {sortedproviders?.map((prov) => (
+                <option key={prov.id} value={prov.id}>
+                  {prov.name}
+                </option>
+              ))}
+            </select>
+
+            <div className="d-flex w-50">
+              {product.provider?.map((provId) => {
+                const selectedProvider = provider.find(
+                  (prov) => prov.id === provId
+                );
+                return (
+                  <ul className="list-group d-flex" key={`provider_${provId}`}>
+                    <li
+                      className="list-group-item"
+                      key={`provider_item_${provId}`}
+                    >
+                      {selectedProvider.name}
+                    </li>
+                  </ul>
+                );
+              })}
+            </div>
+            {/* ... */}
+          </div>
+          <br />
+
+          {/* <UploadImg onImageUpload={handleImageUpload} /> */}
+          <h6
+            style={{
+              fontFamily: "Poppins",
+              textAlign: "start",
+              marginTop: "-1rem",
+            }}
+          >
+            Image:
+          </h6>
+          <UploadImg
+            onImageUpload={handleImageUpload}
+            uploadedImages={product.images}
+            clearUploadedImages={() =>
+              setUserData((product) => ({ ...product, images: [] }))
+            }
+          />
+          <br />
+          <button className={styles.create}>Create</button>
+        </form>
       </div>
-      <div className={styles.divRight}>
-        
-        {/* <UploadImg onImageUpload={handleImageUpload} /> */}
-      <UploadImg
-        onImageUpload={handleImageUpload}
-        uploadedImages={product.images}
-        clearUploadedImages={() =>
-          setUserData((product) => ({ ...product, images: [] }))
-        }
-      />
-          
-      </div>
+      <div className={styles.containerRight}></div>
     </div>
   );
 };
