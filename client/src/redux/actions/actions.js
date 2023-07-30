@@ -16,11 +16,7 @@ import {
   DECREMENT_CART,
   INCREMENT_CART,
   CLEAR_CART,
-  GET_PRODUCT_ID,
   EDIT_PRODUCT,
-  GET_USER_REVIEWS,
-  GET_ALL_REVIEWS,
-  ADD_REVIEW,
 } from "./types";
 import axios from "axios";
 import { ENDPOINT } from "../../components/endpoint/ENDPOINT";
@@ -31,7 +27,6 @@ export const showProducts = () => {
   try {
     return async (dispatch) => {
       const { data } = await axios.get(`${ENDPOINT}product`);
-      console.log(data);
       return dispatch({ type: SHOW_PRODUCTS, payload: data });
     };
   } catch (error) {
@@ -44,15 +39,19 @@ export const getProductName = (name) => {
 };
 
 export const getProductDetail = (id) => {
-  return async (dispatch) => {
-    try {
-      const response = await axios.get(`${ENDPOINT}productid/${id}`);
-      console.log(response.data);
-      dispatch({ type: GET_PRODUCT_DETAIL, payload: response.data });
-      dispatch(getProductReviews(id));
-    } catch (error) {
-      throw new Error("Error fetching product details: " + error.message);
-    }
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${ENDPOINT}productid/${id}`)
+        .then((response) => {
+          console.log(response.data);
+          dispatch({ type: GET_PRODUCT_DETAIL, payload: response.data });
+          resolve();
+        })
+        .catch((error) => {
+          throw new Error("Error fetching product details."); // Lanza una nueva excepción
+        });
+    });
   };
 };
 
@@ -67,9 +66,17 @@ export const addProduct = (product) => {
   };
 };
 
+export const deleteProduct = (productId) => async (dispatch) => {
+  try {
+    await axios.delete(`${ENDPOINT}product/${productId}`);
+    dispatch({ type: DELETE_PRODUCT, payload: productId });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return error.message;
+  }
+};
+
 export const editProduct = (productId, changeProduct) => {
-  console.log("1: ", changeProduct);
-  console.log("2: ", productId);
   return async (dispatch) => {
     try {
       await axios.put(`${ENDPOINT}product/${productId}`, changeProduct);
@@ -82,6 +89,58 @@ export const editProduct = (productId, changeProduct) => {
     }
   };
 };
+
+export const getUsers = () => {
+  try {
+    return async (dispatch) => {
+      const { data } = await axios.get(`${ENDPOINT}user`);
+      // console.log(data);
+      return dispatch({ type: GET_ALL_USERS, payload: data });
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+export const deleteUsers = (userId) => async (dispatch) => {
+  try {
+    await axios.delete(`${ENDPOINT}user/${userId}`);
+    dispatch({ type: DELETE_USERS, payload: userId });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return error.message;
+  }
+};
+export const editUser = (userId, changeUser) => {
+  return async (dispatch) => {
+    try {
+      await axios.put(`${ENDPOINT}user/${userId}`, changeUser);
+      return dispatch({
+        type: EDIT_USERS,
+        payload: { userId, changeUser },
+      });
+    } catch (error) {
+      return error.message;
+    }
+  };
+};
+
+export const getUserId = (id) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${ENDPOINT}user/${id}`)
+        .then((response) => {
+          // console.log(response.data);
+          dispatch({ type: GET_USER_ID, payload: response.data });
+          resolve();
+        })
+        .catch((error) => {
+          throw new Error("Error fetching user details.");
+        });
+    });
+  };
+};
+
 export const addCategory = (category) => {
   return async (dispatch) => {
     try {
@@ -91,6 +150,15 @@ export const addCategory = (category) => {
       return error.message;
     }
   };
+};
+export const deleteCategory = (categoryId) => async (dispatch) => {
+  try {
+    await axios.delete(`${ENDPOINT}category/${categoryId}`);
+    dispatch({ type: DELETE_CATEGORY, payload: categoryId });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    return error.message;
+  }
 };
 
 export const getCategory = () => {
@@ -106,6 +174,36 @@ export const getCategory = () => {
   }
 };
 
+export const getCategoryId = (id) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${ENDPOINT}category/${id}`)
+        .then((response) => {
+          // console.log(response.data);
+          dispatch({ type: GET_CATEGORY_ID, payload: response.data });
+          resolve();
+        })
+        .catch((error) => {
+          throw new Error("Error fetching category details.");
+        });
+    });
+  };
+};
+
+export const categoryEdit = (categoryId, editCategory) => {
+  return async (dispatch) => {
+    try {
+      await axios.put(`${ENDPOINT}category/${categoryId}`, editCategory);
+      return dispatch({
+        type: EDIT_CATEGORY,
+        payload: { categoryId, editCategory },
+      });
+    } catch (error) {
+      return error.message;
+    }
+  };
+};
 export const addProvider = (provider) => {
   return async (dispatch) => {
     try {
@@ -116,7 +214,45 @@ export const addProvider = (provider) => {
     }
   };
 };
+export const deleteProvider = (providerId) => async (dispatch) => {
+  try {
+    await axios.delete(`${ENDPOINT}provider/${providerId}`);
+    dispatch({ type: DELETE_PROVIDER, payload: providerId });
+  } catch (error) {
+    console.error("Error deleting provider:", error);
+    return error.message;
+  }
+};
+export const getProviderId = (id) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${ENDPOINT}provider/${id}`)
+        .then((response) => {
+          // console.log(response.data);
+          dispatch({ type: GET_PROVIDER_ID, payload: response.data });
+          resolve();
+        })
+        .catch((error) => {
+          throw new Error("Error fetching provider");
+        });
+    });
+  };
+};
 
+export const editProvider = (providerId, editProvider) => {
+  return async (dispatch) => {
+    try {
+      await axios.put(`${ENDPOINT}provider/${providerId}`, editProvider);
+      return dispatch({
+        type: EDIT_PROVIDER,
+        payload: { providerId, editProvider },
+      });
+    } catch (error) {
+      return error.message;
+    }
+  };
+};
 export const addRole = (role) => {
   return async (dispatch) => {
     try {
@@ -157,8 +293,10 @@ export const login = (userData) => {
     return async (dispatch) => {
       const response = await axios.post(`${ENDPOINT}login`, userData);
       if (response.data) {
-        const user = response.data;
-        return dispatch({ type: LOGIN, payload: user.User });
+        const user = response.data.User;
+        localStorage.setItem("user", JSON.stringify(user));
+        window.location.reload();
+        return dispatch({ type: LOGIN, payload: user });
       }
       throw new Error("Credenciales inválidas");
     };
@@ -170,7 +308,7 @@ export const login = (userData) => {
 export const logout = () => {
   try {
     return async (dispatch) => {
-      sessionStorage.removeItem("user"); // Eliminar la información del usuario del sessionStorage
+      localStorage.removeItem("user");
       return dispatch({ type: LOGIN, payload: null });
     };
   } catch (error) {
@@ -256,50 +394,6 @@ export const clearCart = () => {
     return {
       type: CLEAR_CART,
     };
-  };
-};
-//Reviews
-export const postReview = (reviewData) => {
-  return async function (dispatch) {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      // Verificar si el usuario está autenticado
-      if (!user) {
-        console.error('Usuario no autenticado');
-        throw new Error('Usuario no autenticado'); // Lanza una excepción para que puedas capturarla en el componente
-      }
-
-      // Obtener el token de acceso del usuario logueado
-      const token = await user.getIdToken();
-
-      // Obtener el userId del usuario logueado desde el objeto currentUser de Firebase
-      const userId = user.uid; // Asegúrate de que la propiedad correcta sea 'uid', ajusta esto si es diferente
-
-      // Llamar a la acción postReview y pasar el usuario logueado, el userId y el token de acceso
-      const response = await axios.post(`${ENDPOINT}reviews/Create`, reviewData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      return response.data;
-    } catch (error) {
-      console.error('Error en la acción postReview:', error);
-      throw new Error('Error al crear la reseña');
-    }
-  };
-};
-export const getProductReviews = (id) => {
-  return async function (dispatch) {
-    try {
-      const response = await axios.get(`${ENDPOINT}reviews/product/${id}`);
-      return dispatch({ type: GET_ALL_REVIEWS, payload: response.data });
-    } catch (error) {
-      console.error('Error al obtener las reseñas del producto:', error);
-      // Manejar el error si es necesario
-    }
   };
 };
 

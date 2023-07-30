@@ -16,12 +16,35 @@ import {
   REMOVE_TO_CART,
   SHOW_PRODUCTS,
   EDIT_PRODUCT,
+
   GET_ALL_REVIEWS,
+
+  ADD_FAV,
+  REMOVE_FAV,
+  GET_CATEGORY_ID,
+  EDIT_CATEGORY,
+  GET_PROVIDER_ID,
+  EDIT_PROVIDER,
+  PRICE_HIGHER_LOWER,
+  PRICE_LOWER_HIGHER,
+  FILTER_NAME_ASC,
+  FILTER_NAME_DESC,
+  DELETE_PRODUCT,
+  DELETE_CATEGORY,
+  DELETE_PROVIDER,
+  GET_ALL_USERS,
+  DELETE_USERS,
+  EDIT_USERS,
+  GET_USER_ID,
+
 } from "../actions/types";
 
 const initialState = {
   cartItems: localStorage.getItem("cart")
     ? JSON.parse(localStorage.getItem("cart"))
+    : [],
+  favorites: localStorage.getItem("favorites")
+    ? JSON.parse(localStorage.getItem("favorites"))
     : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
@@ -32,8 +55,12 @@ const initialState = {
   provider: [],
   user: [],
   role: [],
+
   productReviews: [],
   error: null,
+
+  users: [],
+
 };
 
 function reducer(state = initialState, actions) {
@@ -57,7 +84,7 @@ function reducer(state = initialState, actions) {
       };
 
     case GET_PRODUCT_DETAIL:
-      console.log(actions.payload);
+      // console.log(actions.payload);
       // const filteredProduct = filterProduct.filter((prod) => prod.id === actions.payload);
       return {
         ...state,
@@ -76,6 +103,13 @@ function reducer(state = initialState, actions) {
         ...state,
         category: [...state.category, payload],
       };
+
+    case GET_CATEGORY_ID:
+      console.log("Category id: ", actions.payload);
+      return {
+        ...state,
+        category: actions.payload,
+      };
     case GET_CATEGORY:
       return {
         ...state,
@@ -86,6 +120,12 @@ function reducer(state = initialState, actions) {
       return {
         ...state,
         provider: [...state.provider, payload],
+      };
+    case GET_PROVIDER_ID:
+      // console.log("Provider id: ", actions.payload);    
+      return {
+        ...state,
+        provider: actions.payload,
       };
 
     case GET_PROVIDER:
@@ -106,7 +146,7 @@ function reducer(state = initialState, actions) {
       };
 
     case LOGIN:
-      console.log("reducer login: ", actions.payload);
+      // console.log("reducer login: ", actions.payload);
       return {
         ...state,
         user: actions.payload,
@@ -219,16 +259,125 @@ function reducer(state = initialState, actions) {
           product.id === productId ? { ...product, ...updatedProduct } : product
         ),
       };
+    case EDIT_CATEGORY:
+      const { categoryId, updatedCategory } = actions.payload;
+      return {
+        ...state,
+        category: state.category.map((categ) =>
+          categ.id === categoryId
+            ? { ...category, ...updatedCategory }
+            : category
+        ),
+      };
+    case EDIT_PROVIDER:
+      const { providerId, updateProvider } = actions.payload;
+      return {
+        ...state,
+        provider: state.provider.map((prov) =>
+          prov.id === providerId ? { ...provider, ...updateProvider } : provider
+        ),
+      };
 
       case GET_ALL_REVIEWS :
         return {
             ...state,
             productReviews: actions.payload
         }
-        default:
-          return state;
-      }
-    };
+       
+    
+
+    //Favorite
+
+    case ADD_FAV:
+      return { ...state, favorites: actions.payload };
+    case REMOVE_FAV:
+      return { ...state, favorites: actions.payload };
+
+    //Filter Price
+
+    case PRICE_HIGHER_LOWER:
+      return {
+        ...state,
+        products: actions.payload,
+      };
+
+    case PRICE_LOWER_HIGHER:
+      return {
+        ...state,
+        products: actions.payload,
+      };
+
+    // Filter Name
+
+    case FILTER_NAME_ASC:
+      return {
+        ...state,
+        products: actions.payload,
+      };
+
+    case FILTER_NAME_DESC:
+      return {
+        ...state,
+        products: actions.payload,
+      };
+
+    case DELETE_PRODUCT:
+      const updatedProducts = state.products.filter(
+        (product) => product.id !== actions.payload
+      );
+      return {
+        ...state,
+        products: updatedProducts,
+      };
+
+    case DELETE_CATEGORY:
+      const updatedCateg = state.category.filter(
+        (cat) => cat.id !== actions.payload
+      );
+      return {
+        ...state,
+        category: updatedCateg,
+      };
+    case DELETE_PROVIDER:
+      const updateProv = state.provider.filter(
+        (cat) => cat.id !== actions.payload
+      );
+      return {
+        ...state,
+        provider: updateProv,
+      };
+    case GET_ALL_USERS:
+      return {
+        ...state,
+        users: actions.payload,
+      };
+    case DELETE_USERS:
+      const updateUsers = state.users.filter(
+        (user) => user.id !== actions.payload
+      );
+      return {
+        ...state,
+        users: updateUsers,
+      };
+    case EDIT_USERS:
+      const { userId, updateUser } = actions.payload;
+      return {
+        ...state,
+        users: state.users.map((prov) =>
+          prov.id === userId ? { ...users, ...updateUser } : users
+        ),
+      };
+    case GET_USER_ID:
+      // console.log("User id: ", actions.payload);
+      return {
+        ...state,
+        users: actions.payload,
+      };
+    default:
+      return state;
+  }
+}
+
 
 
 export default reducer;

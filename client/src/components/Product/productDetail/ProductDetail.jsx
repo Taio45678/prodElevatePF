@@ -103,7 +103,6 @@ export const ProductDetail = () => {
           </div>
           <div className={styles.description}>
             <h4 style={{ fontFamily: "Poppins" }}>{name}</h4>
-
             <div
               className={styles.descriptionItem}
               dangerouslySetInnerHTML={{ __html: description }}
