@@ -11,21 +11,21 @@ const { v4: uuidv4 } = require('uuid');
 const {Product , Review} = require('../db')
 router.post('/create', async (req, res) => {
     try {
-      const { title, text, score, productId, userId} = req.body; // Asegúrate de que los nombres de los campos sean los correctos
+      const { title, text, score, productId, userId} = req.body; 
   
-      // Verificar si el producto existe en la base de datos
+      
       let product = await Product.findByPk(productId);
       if (!product) {
         throw new Error('El producto no existe en la base de datos.');
       }
   
-      // Crear la revisión y asociarla al producto automáticamente
+     
       const review = await Review.create({
         title,
         text,
         score,
         productId,
-        userId, // Asigna el productId de la revisión para asociarla al producto
+        userId, 
       });
   
       return res.status(201).json({ review });

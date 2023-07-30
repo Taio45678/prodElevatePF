@@ -6,11 +6,11 @@ import StarIcon from "@mui/icons-material/Star";
 const ReviewCard = ({ review, user }) => {
   const { score, title, text } = review;
 
-  // Utilizar los datos específicos del usuario
+  
   const userName = user ? user.displayName : "Usuario Anónimo";
   const userEmail = user ? user.email : "N/A";
   const userImage = user ? user.photoURL : null;
-// Función para renderizar las estrellas según el puntaje
+
 const renderStars = () => {
     const filledStars = Math.floor(score);
     const halfStar = score - filledStars >= 0.5;

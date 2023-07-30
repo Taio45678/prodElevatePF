@@ -6,7 +6,7 @@ import Rating from "@mui/material/Rating";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth"; // Importa las funciones de autenticación de Firebase
+import { getAuth, onAuthStateChanged } from "firebase/auth"; 
 const AddReviewForm = ({ productId }) => {
     const [input, setInput] = useState({
       userId: "", // Agrega el estado para almacenar el UID del usuario
@@ -43,36 +43,36 @@ const AddReviewForm = ({ productId }) => {
       }
     });
   
-    // Limpia el listener al desmontar el componente para evitar fugas de memoria
+    
     return () => unsubscribe();
   }, []);
-    // Limpia el listener al desmontar el componente para evitar fugas de memoria
+    
     
 const handleReviewSubmit = async (reviewData) => {
     try {
       const user = currentUser;
-      // Verificar si el usuario está autenticado
+     
       if (!user) {
         console.error('Usuario no autenticado');
         return;
       }
   
-      // Obtener el token de acceso del usuario logueado
+      
       const token = await user.getIdToken();
   
-      // Antes de guardar la reseña, asegúrate de transformar el UID de Firebase en un formato UUID válido
-      const formattedUserId = user.uid.replace(/-/g, ''); // Elimina los guiones del UID
-      reviewData.userId = formattedUserId; // Actualiza el campo userId en reviewData con el formato UUID
+     
+      const formattedUserId = user.uid.replace(/-/g, ''); 
+      reviewData.userId = formattedUserId;
   
-      // Llamar a la acción postReview y pasar el usuario logueado, el userId actualizado y el token de acceso
+     
        dispatch(postReview(reviewData, user, formattedUserId, token));
   
-      // ...
+  
     } catch (error) {
       console.error('Error al enviar la review:', error);
-      // Manejar el error si es necesario
+    
     } finally {
-      setLoading(false); // Oculta el estado de carga después de agregar la reseña, si estás usando este estado
+      setLoading(false); 
     }
   };
       function validate(input) {
@@ -92,25 +92,25 @@ const handleReviewSubmit = async (reviewData) => {
     
       const handleSubmit = (e) => {
         e.preventDefault();
-        setLoading(true); // Muestra el estado de carga mientras se verifica la autenticación
+        setLoading(true); 
       
-        // Verifica si el usuario está logueado con Firebase
+        
         const user = currentUser;
         if (!user) {
-          // Si no está logueado, muestra un mensaje o realiza alguna acción
+          
           alert("Debes estar logueado para agregar una reseña");
           setLoading(false);
           return;
         }
       
-        // Si el usuario está logueado, procede con el envío de la reseña
+      
         const validationErrors = validate(input);
         setErrors(validationErrors);
       
         if (Object.keys(validationErrors).length === 0) {
           handleReviewSubmit(input);
         } else {
-          setLoading(false); // Oculta el estado de carga si hay errores de validación
+          setLoading(false); 
         }
       };
 

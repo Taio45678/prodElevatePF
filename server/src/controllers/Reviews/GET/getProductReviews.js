@@ -5,7 +5,7 @@ async function getProductReviews(productId) {
     let product = await Product.findByPk(productId);
     if (!product) throw new Error('El producto no existe en la base de datos.');
   
-    // Consultar las reseñas del producto desde la base de datos
+ 
     const reviewList = await Review.findAll({ where: { productId } });
   
     return reviewList;

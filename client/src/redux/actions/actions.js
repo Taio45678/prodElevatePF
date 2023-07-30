@@ -424,19 +424,19 @@ export const postReview = (reviewData) => {
       const auth = getAuth();
       const user = auth.currentUser;
 
-      // Verificar si el usuario está autenticado
+     
       if (!user) {
         console.error('Usuario no autenticado');
-        throw new Error('Usuario no autenticado'); // Lanza una excepción para que puedas capturarla en el componente
+        throw new Error('Usuario no autenticado'); 
       }
 
-      // Obtener el token de acceso del usuario logueado
+    
       const token = await user.getIdToken();
 
-      // Obtener el userId del usuario logueado desde el objeto currentUser de Firebase
-      const userId = user.uid; // Asegúrate de que la propiedad correcta sea 'uid', ajusta esto si es diferente
+      
+      const userId = user.uid; 
 
-      // Llamar a la acción postReview y pasar el usuario logueado, el userId y el token de acceso
+      
       const response = await axios.post(`${ENDPOINT}reviews/Create`, reviewData, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -457,7 +457,7 @@ export const getProductReviews = (id) => {
       return dispatch({ type: GET_ALL_REVIEWS, payload: response.data });
     } catch (error) {
       console.error('Error al obtener las reseñas del producto:', error);
-      // Manejar el error si es necesario
+      
     }
   };
 };
