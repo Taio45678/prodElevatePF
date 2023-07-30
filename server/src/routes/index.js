@@ -21,8 +21,13 @@ const passport = require("passport");
 const authController = require("../controllers/authController");
 const { postStripe } = require("../controllers/POST/postStripe");
 const { postFavorite } = require("../controllers/POST/postFavorite");
-
+const Review = require('../db')
 const router = Router();
+//Review
+
+//////////////
+
+
 
 router.get("/", function (req, res) {
   res.send("Backend prodElevate");
@@ -103,5 +108,7 @@ router.put("/provider/:id", putProvider);
 router.post("/stripe", postStripe);
 
 router.post("/favorite", postFavorite);
+//-------------------Review----------------------------------------//
 
+////////////////////////////////////////////////////////////////
 module.exports = router;
