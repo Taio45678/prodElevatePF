@@ -17,6 +17,27 @@ import {
   INCREMENT_CART,
   CLEAR_CART,
   EDIT_PRODUCT,
+  GET_USER_REVIEWS,
+  GET_ALL_REVIEWS,
+  ADD_REVIEW,
+  ADD_FAV,
+  REMOVE_FAV,
+  GET_CATEGORY_ID,
+  EDIT_CATEGORY,
+  GET_PROVIDER_ID,
+  EDIT_PROVIDER,
+  PRICE_HIGHER_LOWER,
+  PRICE_LOWER_HIGHER,
+  FILTER_NAME_ASC,
+  FILTER_NAME_DESC,
+  DELETE_PRODUCT,
+  DELETE_CATEGORY,
+  DELETE_PROVIDER,
+  GET_ALL_USERS,
+  DELETE_USERS,
+  EDIT_USERS,
+  GET_USER_ID,
+
 } from "./types";
 import axios from "axios";
 import { ENDPOINT } from "../../components/endpoint/ENDPOINT";
@@ -44,12 +65,12 @@ export const getProductDetail = (id) => {
       axios
         .get(`${ENDPOINT}productid/${id}`)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           dispatch({ type: GET_PRODUCT_DETAIL, payload: response.data });
           resolve();
         })
         .catch((error) => {
-          throw new Error("Error fetching product details."); // Lanza una nueva excepción
+          throw new Error("Error fetching product details.");
         });
     });
   };
@@ -396,6 +417,50 @@ export const clearCart = () => {
     };
   };
 };
+//Reviews
+export const postReview = (reviewData) => {
+  return async function (dispatch) {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      // Verificar si el usuario está autenticado
+      if (!user) {
+        console.error('Usuario no autenticado');
+        throw new Error('Usuario no autenticado'); // Lanza una excepción para que puedas capturarla en el componente
+      }
+
+      // Obtener el token de acceso del usuario logueado
+      const token = await user.getIdToken();
+
+      // Obtener el userId del usuario logueado desde el objeto currentUser de Firebase
+      const userId = user.uid; // Asegúrate de que la propiedad correcta sea 'uid', ajusta esto si es diferente
+
+      // Llamar a la acción postReview y pasar el usuario logueado, el userId y el token de acceso
+      const response = await axios.post(`${ENDPOINT}reviews/Create`, reviewData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error en la acción postReview:', error);
+      throw new Error('Error al crear la reseña');
+    }
+  };
+};
+export const getProductReviews = (id) => {
+  return async function (dispatch) {
+    try {
+      const response = await axios.get(`${ENDPOINT}reviews/product/${id}`);
+      return dispatch({ type: GET_ALL_REVIEWS, payload: response.data });
+    } catch (error) {
+      console.error('Error al obtener las reseñas del producto:', error);
+      // Manejar el error si es necesario
+    }
+  };
+};
 
 export const getUserReviews = (id) => {
   return async function (dispatch) {
@@ -406,3 +471,97 @@ export const getUserReviews = (id) => {
       })
   }
 }
+
+export const addFav = (product) => {
+  const endpoint = "http://localhost:3001/favorite";
+  return async (dispatch) => {
+    try {
+      console.log(product);
+      const { data } = await axios.post(endpoint, product);
+      return dispatch({
+        type: ADD_FAV,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+
+export const removeFav = (id) => {
+  const endpoint = `http://localhost:3001/favorite/${id}`;
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.delete(endpoint);
+      return dispatch({
+        type: REMOVE_FAV,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+
+//Filter
+
+export const priceHigherLower = () => {
+  const endpoint = "http://localhost:3001/filter/price/higher-lower";
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.get(endpoint);
+      return dispatch({
+        type: PRICE_HIGHER_LOWER,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+
+export const priceLowerHigher = () => {
+  const endpoint = "http://localhost:3001/filter/price/lower-higher";
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.get(endpoint);
+      return dispatch({
+        type: PRICE_LOWER_HIGHER,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+
+export const filterNameAsc = () => {
+  const endpoint = "http://localhost:3001/filter/name/asc";
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.get(endpoint);
+      return dispatch({
+        type: FILTER_NAME_ASC,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+
+export const filterNameDesc = () => {
+  const endpoint = "http://localhost:3001/filter/name/desc";
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.get(endpoint);
+      return dispatch({
+        type: FILTER_NAME_DESC,
+        payload: data,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+};
+

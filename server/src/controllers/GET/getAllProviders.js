@@ -17,6 +17,7 @@ async function getAllProviders(req, res) {
         console.log(providers)
         return res.status(200).json(providers);
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ message: error.message });
     }
 };

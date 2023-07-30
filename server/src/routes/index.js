@@ -22,7 +22,7 @@ const passport = require("passport");
 const authController = require("../controllers/authController");
 const { postStripe } = require("../controllers/POST/postStripe");
 const { postFavorite } = require("../controllers/POST/postFavorite");
-const Review = require('../db')const { deleteUser } = require("../controllers/DELETE/deleteUser");
+const { deleteUser } = require("../controllers/DELETE/deleteUser");
 const { deleteProduct } = require("../controllers/DELETE/deleteProduct");
 const { deleteProvider } = require("../controllers/DELETE/deteleProvider");
 const { deleteCategory } = require("../controllers/DELETE/deleteCategory");
@@ -133,7 +133,6 @@ router.delete("/provider/:id", deleteProvider);
 router.post("/stripe", postStripe);
 
 router.post("/favorite", postFavorite);
-//-------------------Review----------------------------------------//
 router.delete("/favorite/:id", deleteFavorite);
 
 router.get("/filter/price/higher-lower", getFilterPriceMajor);
