@@ -27,3 +27,9 @@ export const DECREMENT_CART = "DECREMENT_CART";
 export const INCREMENT_CART = "INCREMENT_CART";
 export const CLEAR_CART = "CLEAR_CART";
 export const CALCULE_TOTALS = "CALCULE_TOTALS";
+
+///////Reviews
+
+export const GET_ALL_REVIEWS  = 'GET_ALL_REVIEWS';
+export const GET_USER_REVIEWS  = 'GET_USER_REVIEWS';
+export const ADD_REVIEW = 'ADD_REVIEW';

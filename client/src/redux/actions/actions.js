@@ -18,10 +18,13 @@ import {
   CLEAR_CART,
   GET_PRODUCT_ID,
   EDIT_PRODUCT,
+  GET_USER_REVIEWS,
+  GET_ALL_REVIEWS,
+  ADD_REVIEW,
 } from "./types";
 import axios from "axios";
 import { ENDPOINT } from "../../components/endpoint/ENDPOINT";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
 
 export const showProducts = () => {
@@ -41,19 +44,15 @@ export const getProductName = (name) => {
 };
 
 export const getProductDetail = (id) => {
-  return (dispatch) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`${ENDPOINT}productid/${id}`)
-        .then((response) => {
-          console.log(response.data);
-          dispatch({ type: GET_PRODUCT_DETAIL, payload: response.data });
-          resolve();
-        })
-        .catch((error) => {
-          throw new Error("Error fetching product details."); // Lanza una nueva excepción
-        });
-    });
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(`${ENDPOINT}productid/${id}`);
+      console.log(response.data);
+      dispatch({ type: GET_PRODUCT_DETAIL, payload: response.data });
+      dispatch(getProductReviews(id));
+    } catch (error) {
+      throw new Error("Error fetching product details: " + error.message);
+    }
   };
 };
 
@@ -259,3 +258,57 @@ export const clearCart = () => {
     };
   };
 };
+//Reviews
+export const postReview = (reviewData) => {
+  return async function (dispatch) {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      // Verificar si el usuario está autenticado
+      if (!user) {
+        console.error('Usuario no autenticado');
+        throw new Error('Usuario no autenticado'); // Lanza una excepción para que puedas capturarla en el componente
+      }
+
+      // Obtener el token de acceso del usuario logueado
+      const token = await user.getIdToken();
+
+      // Obtener el userId del usuario logueado desde el objeto currentUser de Firebase
+      const userId = user.uid; // Asegúrate de que la propiedad correcta sea 'uid', ajusta esto si es diferente
+
+      // Llamar a la acción postReview y pasar el usuario logueado, el userId y el token de acceso
+      const response = await axios.post(`${ENDPOINT}reviews/Create`, reviewData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error en la acción postReview:', error);
+      throw new Error('Error al crear la reseña');
+    }
+  };
+};
+export const getProductReviews = (id) => {
+  return async function (dispatch) {
+    try {
+      const response = await axios.get(`${ENDPOINT}reviews/product/${id}`);
+      return dispatch({ type: GET_ALL_REVIEWS, payload: response.data });
+    } catch (error) {
+      console.error('Error al obtener las reseñas del producto:', error);
+      // Manejar el error si es necesario
+    }
+  };
+};
+
+export const getUserReviews = (id) => {
+  return async function (dispatch) {
+      var json = await axios.get(`${ENDPOINT}reviews/user/${id}`)
+      return dispatch({
+          type: GET_USER_REVIEWS,
+          payload: json.data
+      })
+  }
+}

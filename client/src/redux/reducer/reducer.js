@@ -16,6 +16,7 @@ import {
   REMOVE_TO_CART,
   SHOW_PRODUCTS,
   EDIT_PRODUCT,
+  GET_ALL_REVIEWS,
 } from "../actions/types";
 
 const initialState = {
@@ -29,8 +30,10 @@ const initialState = {
   productDetail: [],
   category: [],
   provider: [],
-  user: null,
+  user: [],
   role: [],
+  productReviews: [],
+  error: null,
 };
 
 function reducer(state = initialState, actions) {
@@ -59,6 +62,7 @@ function reducer(state = initialState, actions) {
       return {
         ...state,
         productDetail: actions.payload,
+      
       };
 
     case ADD_PRODUCT:
@@ -216,9 +220,15 @@ function reducer(state = initialState, actions) {
         ),
       };
 
-    default:
-      return state;
-  }
-}
+      case GET_ALL_REVIEWS :
+        return {
+            ...state,
+            productReviews: actions.payload
+        }
+        default:
+          return state;
+      }
+    };
+
 
 export default reducer;

@@ -112,10 +112,18 @@ passport.deserializeUser(function (id, done) {
       return done(error);
     });
 });
+const reviewsRoute = require ('./routes/review');
 
+
+server.use((req, res, next) => {
+  if (req.method === 'GET') {
+    res.setHeader('Cache-Control', 'no-store');
+  }
+  next();
+});
 // server.set('views', __dirname + '/views');
 // server.set('view engine', 'ejs');
-
+server.use("/reviews", reviewsRoute);
 server.use(router);
 
 module.exports = server;

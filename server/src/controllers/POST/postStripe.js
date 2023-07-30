@@ -19,7 +19,7 @@ async function postStripe(req, res) {
     for (const item of cartItems) {
       const product = await Product.findByPk(item.id);
       if (product) {
-        product.minStock -= item.cartQuantity;
+        product.stock -= item.cartQuantity;
         await product.save();
       }
     }
