@@ -116,39 +116,69 @@ const handleReviewSubmit = async (reviewData) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <Box sx={{ "& .MuiTextField-root": { m: 1, width: "60ch" }, width: "62ch", my: "2%", mx: "30%", maxWidth: "100%", bgcolor: "white", borderRadius: "10px" }}>
-          <Box component="form" sx={{ "& .MuiTextField-root": { m: 1, width: "60ch" }, maxWidth: "100%", bgcolor: "white", borderRadius: "10px" }} noValidate autoComplete="off">
-            <div>
+    <form onSubmit={handleSubmit}>
+      <Grid container spacing={3} justifyContent="center">
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              textAlign: "center",
+            }}
+          >
             <Rating
-                    defaultValue={2.5}
-                    precision={0.5}
-                    size="large"
-                    label="Puntuación:" // Usar la prop "label" en lugar de "InputLabelProps"
-                    name="score"
-                    value={input.score}
-                    onChange={(event, newValue) => {
-                        setInput((prevInput) => ({
-                        ...prevInput,
-                        score: newValue,
-                        }));
-                    }}
-                    />
-              {errors.score && <p>{errors.score}</p>}
-            </div>
-            <div>
-              <TextField id="standard-basic" label="Título" variant="standard" htmlFor="title" value={input.title} name="title" onChange={handleInputChange} InputLabelProps={{ shrink: true }} />
-              {errors.title && <p>{errors.title}</p>}
-            </div>
-            <div>
-              <TextField id="standard-basic" variant="standard" label="Reseña:" htmlFor="text" value={input.text} onChange={handleInputChange} name="text" InputLabelProps={{ shrink: true }} />
-              {errors.text && <p>{errors.text}</p>}
-            </div>
+              defaultValue={2.5}
+              precision={0.5}
+              size="large"
+              label="Puntuación:"
+              name="score"
+              value={input.score}
+              onChange={(event, newValue) => {
+                setInput((prevInput) => ({
+                  ...prevInput,
+                  score: newValue,
+                }));
+              }}
+            />
+            {errors.score && <p>{errors.score}</p>}
           </Box>
-        </Box>
-        <Button type="submit">Agregar Reseña</Button>
-      </form>
-    </div>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="standard-basic"
+            label="Título"
+            variant="standard"
+            htmlFor="title"
+            value={input.title}
+            name="title"
+            onChange={handleInputChange}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+          />
+          {errors.title && <p>{errors.title}</p>}
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="standard-basic"
+            variant="standard"
+            label="Reseña:"
+            htmlFor="text"
+            value={input.text}
+            onChange={handleInputChange}
+            name="text"
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            multiline
+            rows={4}
+          />
+          {errors.text && <p>{errors.text}</p>}
+        </Grid>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" color="primary">
+            Agregar Reseña
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
+  </div>
   );
 };
 

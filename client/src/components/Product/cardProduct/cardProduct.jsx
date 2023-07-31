@@ -31,16 +31,27 @@ export const CardProduct = ({ product }) => {
     navigate("/cart");
   };
 
-  const handleFavorite = (event) => {
-    if (isFav) {
-      setIsFav(false);
-      dispatch(removeFav(id));
-    } else {
-      setIsFav(true);
-      dispatch(addFav(productWithUser));
-      navigate("/favorites");
+  const handleFavorite = async (event) => {
+    if (!currentUser) {
+      alert("Debes estar logueado para agregar a favoritos");
+      return;
+    }
+  
+    try {
+      if (isFav) {
+        setIsFav(false);
+        await dispatch(removeFav(id));
+      } else {
+        setIsFav(true);
+        await dispatch(addFav(productWithUser));
+        navigate("/favorites");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Hubo un error al agregar el producto a favoritos.");
     }
   };
+  
 
   useEffect(() => {
     favorites.forEach((fav) => {

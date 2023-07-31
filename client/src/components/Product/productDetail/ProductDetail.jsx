@@ -67,7 +67,8 @@ export const ProductDetail = () => {
     "Unknown Category";
 
     const StyledCard = styled(Card)({
-      width: "1000px",
+      
+      width: "600px", // Modifica el ancho a 800px
       margin: "auto",
       padding: "1rem",
     });
@@ -120,27 +121,32 @@ export const ProductDetail = () => {
           
         </div>
       )}
-     <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          {/* Mostrar las reseñas aquí */}
+     
+    <Grid container spacing={3}>
+      <Grid item xs={12} sm={6}>
+        {/* Mostrar las reseñas aquí */}
+        <Box sx={{ marginBottom: "20px", display: "flex", flexDirection: "column" }}>
           {productReviews && productReviews.length > 0 ? (
             <>
               <h3>Reseñas de los usuarios:</h3>
               {productReviews.map((review) => (
-                <ReviewCard key={review.id} review={review} user = {currentUser} />
+                <ReviewCard key={review.id} review={review} user={currentUser} />
               ))}
             </>
           ) : (
             <p>No hay reseñas disponibles.</p>
           )}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {/* Mostrar el formulario de agregar reseña aquí */}
-          <StyledCard>
-            <AddReviewForm productId={id} />
-          </StyledCard>
-        </Grid>
+        </Box>
       </Grid>
+      <Grid item xs={12} sm={6}>
+        {/* Mostrar el formulario de agregar reseña aquí */}
+        <StyledCard>
+          <Box sx={{ marginTop: "20px" }}>
+            <AddReviewForm productId={id} />
+          </Box>
+        </StyledCard>
+      </Grid>
+    </Grid>
     </div>
   );
 };

@@ -2,7 +2,6 @@ const {Router} = require('express');
 const createReview = require("../controllers/Reviews/POST/createReview");
 const deleteReview = require("../controllers/Reviews/DELETE/deteleReview");
 const editReview = require("../controllers/Reviews/PUT/editReview");
-const getReview = require("../controllers/Reviews/GET/getReview");
 const { getProductReviews } = require("../controllers/Reviews/GET/getProductReviews");
 
 

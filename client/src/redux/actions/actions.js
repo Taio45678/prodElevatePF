@@ -483,6 +483,7 @@ export const addFav = (product) => {
         payload: data,
       });
     } catch (error) {
+      console.log(error);
       window.alert(error);
     }
   };
