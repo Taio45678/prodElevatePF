@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+import validateForm from "./validation";
 
 export const Product = () => {
   useEffect(() => {
@@ -49,6 +49,7 @@ export const Product = () => {
     stock:0,
   });
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleDescriptionChange = (value) => {
     setDescription(value);
@@ -89,51 +90,73 @@ export const Product = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // console.log(product);
-    dispatch(addProduct(product));
-    toast.success("¡Product created successfully!");
-    setProduct({
-      category: "",
-      name: "",
-      brand: "",
-      condition: "",
-      description: "",
-      purchasePrice: "",
-      salePrice: "",
-      minimumStock: "",
-      provider: [],
-      images: [],
-    });
-    // Reiniciar isImageUploaded a false después de enviar el formulario
-    setIsImageUploaded(false);
+    const errors = validateForm (
+      product.category,
+      product.name,
+      product.brand,
+      product.condition,
+      product.description,
+      product.purchasePrice,
+      product.salePrice,
+      product.minimumStock,
+      product.provider,
+      product.images
+    );
+    setErrors(errors);
+
+    if (Object.keys(product).length === 0) {
+      dispatch(addProduct(product));
+      toast.success("¡Product created successfully!");
+      setProduct({
+        category: "",
+        name: "",
+        brand: "",
+        condition: "",
+        description: "",
+        purchasePrice: "",
+        salePrice: "",
+        minimumStock: "",
+        provider: [],
+        images: [],
+      });
+      setErrors({});
+      // Reiniciar isImageUploaded a false después de enviar el formulario
+      setIsImageUploaded(false);
+    } else {
+      toast.error("Data is Incompleted. All fields must be filled Correctly");
+    }
   };
   // console.log("provider: ", provider);
   return (
     <div className={styles.container}>
-      <hr />
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <h5 style={{ fontFamily: "Poppins", marginBottom: "2rem" }}>
-          New product
-        </h5>
-        {/* Categoria de Producto */}
-        <div className="d-flex justify-content-around">
-          <select
-            className="form-select form-select-sm mb-3 w-50 d-start"
-            name="category"
-            id="category"
-            value={product.category}
-            onChange={handleChange}
-          >
-            <option value="" style={{ fontFamily: "Poppins" }}>
-              -- Category --
-            </option>
-            {sortedCategories.map((catg) => (
-              <option key={catg.id} value={catg.id}>
-                {catg.name}
+      <div className={styles.divLeft}>
+        <hr />
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <h5 style={{ fontFamily: "Poppins", marginBottom: "2rem" }}>
+            New product
+          </h5>
+          {/* Categoria de Producto */}
+          <div className="d-flex justify-content-around">
+            <select
+              className="form-select form-select-sm mb-3 w-50 d-start"
+              name="category"
+              id="category"
+              value={product.category}
+              onChange={handleChange}
+            >
+              <option value="" style={{ fontFamily: "Poppins" }}>
+                -- Category --
               </option>
-            ))}
-          </select>
-
-          {/* Nombre de Producto */}
+              {sortedCategories.map((catg) => (
+                <option key={catg.id} value={catg.id}>
+                  {catg.name}
+                </option>
+              ))}
+            </select>
+            {errors.category && (
+                  <p className={styles.error}>{errors.category}</p>
+            )}
+            {/* Nombre de Producto */}
 
           <input
             className="form-control mb-3 w-50 d-end"
@@ -143,6 +166,9 @@ export const Product = () => {
             value={product.name}
             onChange={handleChange}
           />
+            {errors.name && (
+                  <p className={styles.error}>{errors.name}</p>
+            )}
         </div>
         <div className="d-flex justify-content-around">
           {/* brand de Producto */}
@@ -154,6 +180,9 @@ export const Product = () => {
             value={product.brand}
             onChange={handleChange}
           />
+          {errors.brand && (
+              <p className={styles.error}>{errors.brand}</p>
+          )}
           <select
   className="form-control mb-3 w-50 d-end"
   name="condition"
@@ -165,6 +194,9 @@ export const Product = () => {
   <option value="Used">Used</option>
   <option value="Like New">Like New</option>
 </select>
+{errors.condition && (
+    <p className={styles.error}>{errors.condition}</p>
+)}
         </div>
 
         {/* Descripcion de Producto */}
@@ -199,7 +231,9 @@ export const Product = () => {
             fontFamily: "Poppins",
           }}
         />
-
+          {errors.description && (
+              <p className={styles.error}>{errors.description}</p>
+          )};
         {/* precio de compra de Producto */}
         <div className="d-flex g-3">
           <div className="input-group">
@@ -214,7 +248,9 @@ export const Product = () => {
             <span className="input-group-text mb-3">$</span>
             {/* <span className="input-group-text mb-3">0.00</span> */}
           </div>
-
+            {errors.purchasePrice && (
+                  <p className={styles.error}>{errors.purchasePrice}</p>
+            )}
           {/* precio de venta de Producto */}
 
           <div className="input-group">
@@ -229,6 +265,9 @@ export const Product = () => {
             <span className="input-group-text mb-3">$</span>
             {/* <span className="input-group-text mb-3">0.00</span> */}
           </div>
+            {errors.salePrice && (
+                <p className={styles.error}>{errors.salePrice}</p>
+            )}
         </div>
 
         {/* stock minimo de Producto */}
@@ -240,6 +279,9 @@ export const Product = () => {
           value={product.minimumStock}
           onChange={handleChange}
         />
+          {errors.minimumStock && (
+              <p className={styles.error}>{errors.minimumStock}</p>
+          )}
 
         {/* Proveedor */}
         <div className="container-m">
@@ -277,28 +319,36 @@ export const Product = () => {
           </div>
           {/* ... */}
         </div>
+          {errors.provider && (
+              <p className={styles.error}>{errors.provider}</p>
+          )}
         <br />
 
-        {/* <UploadImg onImageUpload={handleImageUpload} /> */}
-        <h6
-          style={{
-            fontFamily: "Poppins",
-            textAlign: "start",
-            marginTop: "-1rem",
-          }}
-        >
-          Image:
-        </h6>
-        <UploadImg
-          onImageUpload={handleImageUpload}
-          uploadedImages={product.images}
-          clearUploadedImages={() =>
-            setUserData((product) => ({ ...product, images: [] }))
-          }
-        />
-        <br />
-        <button className={styles.create}>Create</button>
-      </form>
+          {/* <UploadImg onImageUpload={handleImageUpload} /> */}
+          <h6
+            style={{
+              fontFamily: "Poppins",
+              textAlign: "start",
+              marginTop: "-1rem",
+            }}
+          >
+            Image:
+          </h6>
+          <UploadImg
+            onImageUpload={handleImageUpload}
+            uploadedImages={product.images}
+            clearUploadedImages={() =>
+              setUserData((product) => ({ ...product, images: [] }))
+            }
+          />
+          {errors.images && (
+             <p className={styles.error}>{errors.images}</p>
+          )}
+          <br />
+          <button className={styles.create}>Create</button>
+        </form>
+      </div>
+      <div className={styles.containerRight}></div>
     </div>
   );
 };
